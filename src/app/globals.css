@@ -1,26 +1,50 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-background: #FAFAF9;
+  --color-foreground: #1C1917;
+  --color-surface: #FFFFFF;
+  --color-border: #E7E5E4;
+  --color-text-secondary: #78716C;
+  --color-text-muted: #A8A29E;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Alliance colors */
+  --color-udf: #2563EB;
+  --color-udf-light: #DBEAFE;
+  --color-udf-dark: #1E40AF;
+  --color-ldf: #DC2626;
+  --color-ldf-light: #FEE2E2;
+  --color-ldf-dark: #991B1B;
+  --color-nda: #F59E0B;
+  --color-nda-light: #FEF3C7;
+  --color-nda-dark: #D97706;
+  --color-ind: #6B7280;
+  --color-ind-light: #F3F4F6;
+  --color-ind-dark: #4B5563;
+  --color-oth: #8B5CF6;
+  --color-oth-light: #EDE9FE;
+
+  /* Category colors */
+  --color-cat-udf-bastion: #1E40AF;
+  --color-cat-udf-strong: #2563EB;
+  --color-cat-udf-leaning: #60A5FA;
+  --color-cat-ldf-bastion: #991B1B;
+  --color-cat-ldf-strong: #DC2626;
+  --color-cat-ldf-leaning: #F87171;
+  --color-cat-nda-leaning: #D97706;
+  --color-cat-swinging: #9CA3AF;
+
+  /* Fonts */
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), system-ui, sans-serif;
 }
