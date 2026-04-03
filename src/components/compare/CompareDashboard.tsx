@@ -6,7 +6,6 @@ import { X, Search } from 'lucide-react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
-import AllianceBadge from '@/components/AllianceBadge';
 import CategoryBadge from '@/components/CategoryBadge';
 import { ALLIANCE_COLORS } from '@/lib/constants';
 

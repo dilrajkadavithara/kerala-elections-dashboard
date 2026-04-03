@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import {
-  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Cell,
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import { ChevronRight } from 'lucide-react';
 import { ALLIANCE_COLORS } from '@/lib/constants';
@@ -51,7 +51,6 @@ const ALLIANCE_COLOR_MAP: Record<string, string> = {
 };
 
 const ELECTION_LABELS = ['2011', '2014', '2016', '2019', '2021', '2024'];
-const ELECTION_KEYS_ORDERED = ["A'11", "LS'14", "A'16", "LS'19", "A'21", "LS'24"];
 
 const CATEGORY_GROUPS = [
   { label: 'Bastion', desc: 'Won all 6 of 6 elections', categories: ['UDF BASTION', 'LDF BASTION'] },
@@ -117,7 +116,6 @@ function AllianceTrendPanel({ data }: { data: AllianceTrendData }) {
   const [viewMode, setViewMode] = useState<'statewide' | 'district' | 'constituency'>('statewide');
   const [selectedDistrict, setSelectedDistrict] = useState(data.districtList[0] || '');
   const [selectedConstituency, setSelectedConstituency] = useState<number | null>(null);
-  const [constQuery, setConstQuery] = useState('');
 
   // Compute chart data based on view mode
   let chartData: { year: number; UDF: number; LDF: number; NDA: number }[] = [];
@@ -169,13 +167,6 @@ function AllianceTrendPanel({ data }: { data: AllianceTrendData }) {
     }
   }
 
-  const constResults = constQuery.length >= 2
-    ? data.constituencies
-        .filter((c) => c.district === selectedDistrict)
-        .filter((c) => c.name.toLowerCase().includes(constQuery.toLowerCase()))
-        .slice(0, 8)
-    : [];
-
   return (
     <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
       <h3 className="font-heading font-semibold text-stone-800 mb-1">Alliance Vote Share Over Time</h3>
@@ -206,7 +197,7 @@ function AllianceTrendPanel({ data }: { data: AllianceTrendData }) {
         {(viewMode === 'district' || viewMode === 'constituency') && (
           <select
             value={selectedDistrict}
-            onChange={(e) => { setSelectedDistrict(e.target.value); setSelectedConstituency(null); setConstQuery(''); }}
+            onChange={(e) => { setSelectedDistrict(e.target.value); setSelectedConstituency(null); }}
             className="text-sm border border-stone-200 rounded-lg px-3 py-1.5 bg-white text-stone-700"
           >
             {data.districtList.map((d) => (

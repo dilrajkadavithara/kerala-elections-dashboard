@@ -398,7 +398,7 @@ export function getDistrictDetail(name: string) {
         CONSTITUENCY: c.CONSTITUENCY,
         CATEGORY: cat?.CATEGORY || '',
         WINNING_ALLIANCE: row?.WINNING_ALLIANCE || '',
-        WINNER: ('WINNER' in (row || {}) ? (row as any).WINNER : '') || '',
+        WINNER: (row && 'WINNER' in row ? String((row as unknown as { WINNER: string }).WINNER) : ''),
         MARGIN: row ? Math.abs(row.MARGIN) : 0,
         UDF_WINS: cat?.UDF_WINS || 0,
         LDF_WINS: cat?.LDF_WINS || 0,
@@ -511,7 +511,6 @@ export function getStatewideVoteShareTrend() {
 
 export function getHeatmapData() {
   const catMap = new Map(categoryAnalysis.map((c) => [c.CONST_ID, c]));
-  const constMap = new Map(constituencies.map((c) => [c.CONST_ID, c]));
   const catOrder = ['UDF BASTION', 'UDF STRONG', 'UDF LEANING', 'LDF BASTION', 'LDF STRONG', 'LDF LEANING', 'NDA LEANING', 'SWINGING'];
 
   return constituencies.map((c) => {
@@ -573,8 +572,6 @@ export function getAllianceTrendData() {
     { year: 2021, type: 'assembly' as const },
     { year: 2024, type: 'loksabha' as const },
   ];
-  const constMap = new Map(constituencies.map((c) => [c.CONST_ID, c]));
-
   // Per-constituency timeline
   const constTimelines: Record<number, { id: number; name: string; district: string; points: { year: number; UDF: number; LDF: number; NDA: number }[] }> = {};
   for (const c of constituencies) {

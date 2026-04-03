@@ -18,9 +18,31 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Kerala Elections Dashboard',
+  title: {
+    default: 'Kerala Elections Dashboard',
+    template: '%s — Kerala Elections Dashboard',
+  },
   description:
     'Interactive dashboard analyzing Kerala election data across 6 elections covering all 140 assembly constituencies.',
+  metadataBase: new URL('https://kerala-elections-dashboard.vercel.app'),
+  openGraph: {
+    title: 'Kerala Elections Dashboard',
+    description:
+      'Interactive dashboard analyzing Kerala election data across Assembly (2011, 2016, 2021) and Lok Sabha (2014, 2019, 2024) elections covering all 140 constituencies.',
+    type: 'website',
+    locale: 'en_IN',
+    siteName: 'Kerala Elections Dashboard',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Kerala Elections Dashboard',
+    description:
+      'Interactive dashboard analyzing Kerala election data across 6 elections covering 140 constituencies.',
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const constituencyNames = constituencies.map((c) => ({

@@ -2,15 +2,13 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { TrendingUp, Users, Award, BarChart3 } from 'lucide-react';
+import { Users, Award } from 'lucide-react';
 import AllianceBadge from '@/components/AllianceBadge';
 import SeatTallyBar from '@/components/SeatTallyBar';
-import SwingIndicator from '@/components/SwingIndicator';
 import SeatsBarChart from '@/components/charts/SeatsBarChart';
 import CategoryBreakdownChart from '@/components/charts/CategoryBreakdownChart';
 import CategoryExplanation from '@/components/CategoryExplanation';
 import { ELECTIONS, ALLIANCE_COLORS } from '@/lib/constants';
-import type { AssemblyElection, LokSabhaElection } from '@/types/elections';
 
 interface TallyRow {
   key: string;

@@ -329,7 +329,6 @@ function ExpandableRow({
     { alliance: 'NDA', candidate: data.NDA_CANDIDATE, party: data.NDA_PARTY, votes: data.NDA_VOTES, pct: data.NDA_VOTE_PCT, color: ALLIANCE_COLORS.NDA.primary },
   ];
 
-  const totalWins = data.UDF_WINS + data.LDF_WINS + data.NDA_WINS;
   const dominant = data.UDF_WINS >= data.LDF_WINS && data.UDF_WINS >= data.NDA_WINS ? 'UDF'
     : data.LDF_WINS >= data.NDA_WINS ? 'LDF' : 'NDA';
   const dominantWins = Math.max(data.UDF_WINS, data.LDF_WINS, data.NDA_WINS);

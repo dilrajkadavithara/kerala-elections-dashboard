@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import AllianceBadge from '@/components/AllianceBadge';
 import { CATEGORY_COLORS } from '@/lib/constants';
 import CategoryExplanation from '@/components/CategoryExplanation';
@@ -48,11 +47,6 @@ export default function CategoriesDashboard({ breakdown, constituencies }: Props
   const filtered = selectedCategory
     ? constituencies.filter((c) => c.CATEGORY === selectedCategory)
     : constituencies;
-
-  // Stacked bar data: 140 total split by category
-  const stackedData = [
-    { label: 'All 140 Seats', ...Object.fromEntries(breakdown.map((b) => [b.category, b.count])) },
-  ];
 
   return (
     <div className="space-y-6">

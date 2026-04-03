@@ -1,5 +1,3 @@
-import { ALLIANCE_COLORS } from '@/lib/constants';
-
 const allianceStyles: Record<string, string> = {
   UDF: 'bg-blue-100 text-blue-800 border-blue-300',
   LDF: 'bg-red-100 text-red-800 border-red-300',
