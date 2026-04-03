@@ -4,10 +4,8 @@ import { MapPin, Award, TrendingUp, Users } from 'lucide-react';
 import { constituencies, getConstituencyDetail } from '@/lib/data';
 import AllianceBadge from '@/components/AllianceBadge';
 import CategoryBadge from '@/components/CategoryBadge';
-import VoteShareTrendChart from '@/components/constituency/VoteShareTrendChart';
-import MarginTrendChart from '@/components/constituency/MarginTrendChart';
 import DemographicBar from '@/components/constituency/DemographicBar';
-import ElectionCard from '@/components/constituency/ElectionCard';
+import ConstituencyElections from '@/components/constituency/ConstituencyElections';
 import { ALLIANCE_COLORS } from '@/lib/constants';
 
 export async function generateStaticParams() {
@@ -137,27 +135,8 @@ export default async function ConstituencyDetailPage({
         </div>
       </div>
 
-      {/* C & D. Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
-          <h3 className="font-heading font-semibold text-stone-800 mb-4">Vote Share Trend</h3>
-          <VoteShareTrendChart data={voteShareTrend} />
-        </div>
-        <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
-          <h3 className="font-heading font-semibold text-stone-800 mb-4">Margin Trend</h3>
-          <MarginTrendChart data={voteShareTrend} />
-        </div>
-      </div>
-
-      {/* E. Election history cards */}
-      <div>
-        <h3 className="font-heading font-semibold text-stone-800 mb-4">Election History</h3>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {historyRows.map((row) => (
-            <ElectionCard key={`${row.year}-${row.type}`} row={row} />
-          ))}
-        </div>
-      </div>
+      {/* C, D, E. Charts + Election cards with Assembly/LS filter */}
+      <ConstituencyElections voteShareTrend={voteShareTrend} historyRows={historyRows} />
 
       {/* F. Demographic profile */}
       <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">

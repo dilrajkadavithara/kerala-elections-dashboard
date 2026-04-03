@@ -5,6 +5,7 @@ import Link from 'next/link';
 import AllianceBadge from '@/components/AllianceBadge';
 import { CATEGORY_COLORS } from '@/lib/constants';
 import CategoryExplanation from '@/components/CategoryExplanation';
+import ElectionTypeFilter from '@/components/ElectionTypeFilter';
 
 interface CategoryCount {
   category: string;
@@ -32,17 +33,19 @@ interface Props {
   constituencies: ConstRow[];
 }
 
-const WIN_COLS = [
-  { key: 'WIN_A2011', label: "A'11" },
-  { key: 'WIN_A2016', label: "A'16" },
-  { key: 'WIN_A2021', label: "A'21" },
-  { key: 'WIN_LS2014', label: "LS'14" },
-  { key: 'WIN_LS2019', label: "LS'19" },
-  { key: 'WIN_LS2024', label: "LS'24" },
+const ALL_WIN_COLS = [
+  { key: 'WIN_A2011', label: '2011', type: 'assembly' as const },
+  { key: 'WIN_A2016', label: '2016', type: 'assembly' as const },
+  { key: 'WIN_A2021', label: '2021', type: 'assembly' as const },
+  { key: 'WIN_LS2014', label: '2014', type: 'loksabha' as const },
+  { key: 'WIN_LS2019', label: '2019', type: 'loksabha' as const },
+  { key: 'WIN_LS2024', label: '2024', type: 'loksabha' as const },
 ] as const;
 
 export default function CategoriesDashboard({ breakdown, constituencies }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [elTypeFilter, setElTypeFilter] = useState<'all' | 'assembly' | 'loksabha'>('all');
+  const winCols = elTypeFilter === 'all' ? ALL_WIN_COLS : ALL_WIN_COLS.filter((c) => c.type === elTypeFilter);
 
   const filtered = selectedCategory
     ? constituencies.filter((c) => c.CATEGORY === selectedCategory)
@@ -146,9 +149,12 @@ export default function CategoriesDashboard({ breakdown, constituencies }: Props
 
       {/* C. Category detail table */}
       <div className="bg-white border border-stone-200 rounded-xl shadow-sm overflow-hidden">
-        <div className="px-5 py-3 border-b border-stone-100 text-sm text-stone-500">
-          Showing <span className="font-semibold text-stone-800">{filtered.length}</span> constituencies
+        <div className="px-5 py-3 border-b border-stone-100 flex items-center justify-between">
+          <span className="text-sm text-stone-500">
+            Showing <span className="font-semibold text-stone-800">{filtered.length}</span> constituencies
           {selectedCategory && <> in <span className="font-semibold text-stone-800">{selectedCategory}</span></>}
+          </span>
+          <ElectionTypeFilter value={elTypeFilter} onChange={setElTypeFilter} />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -156,7 +162,7 @@ export default function CategoriesDashboard({ breakdown, constituencies }: Props
               <tr className="bg-stone-50 text-stone-600 text-xs uppercase tracking-wider">
                 <th className="text-left px-4 py-2.5 font-semibold">Constituency</th>
                 <th className="text-left px-4 py-2.5 font-semibold">District</th>
-                {WIN_COLS.map((w) => (
+                {winCols.map((w) => (
                   <th key={w.key} className="text-center px-3 py-2.5 font-semibold">{w.label}</th>
                 ))}
                 <th className="text-center px-3 py-2.5 font-semibold">UDF</th>
@@ -173,7 +179,7 @@ export default function CategoriesDashboard({ breakdown, constituencies }: Props
                     </Link>
                   </td>
                   <td className="px-4 py-2 text-stone-600 whitespace-nowrap">{c.DISTRICT}</td>
-                  {WIN_COLS.map((w) => {
+                  {winCols.map((w) => {
                     const val = c[w.key as keyof typeof c] as string;
                     return (
                       <td key={w.key} className="px-3 py-2 text-center">

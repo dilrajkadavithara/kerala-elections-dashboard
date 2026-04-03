@@ -6,6 +6,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import { ChevronRight } from 'lucide-react';
+import ElectionTypeFilter from '@/components/ElectionTypeFilter';
 import { ALLIANCE_COLORS } from '@/lib/constants';
 
 interface StatewidePoint {
@@ -60,8 +61,10 @@ const CATEGORY_GROUPS = [
 ];
 
 export default function TrendsDashboard({ statewideTrend, heatmapData, allianceTrendData, turnoutData }: Props) {
+  const [statewidElType, setStatewidElType] = useState<'all' | 'assembly' | 'loksabha'>('all');
 
-  const formattedTrend = [...statewideTrend]
+  const filteredStatewide = statewidElType === 'all' ? statewideTrend : statewideTrend.filter((d) => d.type === (statewidElType === 'assembly' ? 'assembly' : 'loksabha'));
+  const formattedTrend = [...filteredStatewide]
     .sort((a, b) => {
       const yearOrder = [2011, 2014, 2016, 2019, 2021, 2024];
       return yearOrder.indexOf(a.election === "A'11" ? 2011 : a.election === "LS'14" ? 2014 : a.election === "A'16" ? 2016 : a.election === "LS'19" ? 2019 : a.election === "A'21" ? 2021 : 2024)
@@ -81,7 +84,10 @@ export default function TrendsDashboard({ statewideTrend, heatmapData, allianceT
     <div className="space-y-6">
       {/* A. Statewide vote share trend */}
       <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
-        <h3 className="font-heading font-semibold text-stone-800 mb-1">Statewide Vote Share Trend</h3>
+        <div className="flex items-center justify-between mb-1">
+          <h3 className="font-heading font-semibold text-stone-800">Statewide Vote Share Trend</h3>
+          <ElectionTypeFilter value={statewidElType} onChange={setStatewidElType} />
+        </div>
         <p className="text-xs text-stone-400 mb-4">Average vote share across all 140 constituencies over time</p>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={formattedTrend}>
@@ -363,9 +369,20 @@ function TurnoutTrendPanel({ data }: { data: TurnoutTrendData }) {
 
 /* ── Seat Loyalty Panel ── */
 
+const ALL_ELECTION_META = [
+  { year: '2011', key: "A'11", type: 'assembly' as const },
+  { year: '2014', key: "LS'14", type: 'loksabha' as const },
+  { year: '2016', key: "A'16", type: 'assembly' as const },
+  { year: '2019', key: "LS'19", type: 'loksabha' as const },
+  { year: '2021', key: "A'21", type: 'assembly' as const },
+  { year: '2024', key: "LS'24", type: 'loksabha' as const },
+];
+
 function SeatLoyaltyPanel({ heatmapData }: { heatmapData: HeatmapRow[] }) {
   const [selectedAlliance, setSelectedAlliance] = useState<'ALL' | 'UDF' | 'LDF' | 'NDA'>('ALL');
   const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [elTypeFilter, setElTypeFilter] = useState<'all' | 'assembly' | 'loksabha'>('all');
+  const visibleElections = elTypeFilter === 'all' ? ALL_ELECTION_META : ALL_ELECTION_META.filter((e) => e.type === elTypeFilter);
 
   function toggleGroup(label: string) {
     setExpandedGroups((prev) => {
@@ -408,6 +425,7 @@ function SeatLoyaltyPanel({ heatmapData }: { heatmapData: HeatmapRow[] }) {
             </button>
           ))}
         </div>
+        <ElectionTypeFilter value={elTypeFilter} onChange={setElTypeFilter} />
       </div>
 
       {CATEGORY_GROUPS.map((group) => {
@@ -442,8 +460,8 @@ function SeatLoyaltyPanel({ heatmapData }: { heatmapData: HeatmapRow[] }) {
                       <th className="text-left pl-10 pr-2 py-1.5 font-medium">Constituency</th>
                       <th className="text-left px-2 py-1.5 font-medium">District</th>
                       <th className="text-left px-2 py-1.5 font-medium">Category</th>
-                      {ELECTION_LABELS.map((y) => (
-                        <th key={y} className="text-center px-1.5 py-1.5 font-medium w-14">{y}</th>
+                      {visibleElections.map((e) => (
+                        <th key={e.key} className="text-center px-1.5 py-1.5 font-medium w-14">{e.year}</th>
                       ))}
                     </tr>
                   </thead>
@@ -473,7 +491,7 @@ function SeatLoyaltyPanel({ heatmapData }: { heatmapData: HeatmapRow[] }) {
                             {row.category}
                           </span>
                         </td>
-                        {row.elections.map((el) => (
+                        {row.elections.filter((el) => visibleElections.some((ve) => ve.key === el.key)).map((el) => (
                           <td key={el.key} className="px-1.5 py-1.5 text-center">
                             <span
                               className="inline-block w-8 py-0.5 rounded text-[10px] font-bold text-white"

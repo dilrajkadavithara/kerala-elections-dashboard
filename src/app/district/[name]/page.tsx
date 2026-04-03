@@ -3,8 +3,7 @@ import Link from 'next/link';
 import { MapPin } from 'lucide-react';
 import { getDistrictList, getDistrictDetail } from '@/lib/data';
 import DemographicBar from '@/components/constituency/DemographicBar';
-import SeatsBarChart from '@/components/charts/SeatsBarChart';
-import VoteShareTrendChart from '@/components/constituency/VoteShareTrendChart';
+import DistrictCharts from '@/components/districts/DistrictCharts';
 import DistrictConstituencyTable from '@/components/districts/DistrictConstituencyTable';
 
 export async function generateStaticParams() {
@@ -46,17 +45,8 @@ export default async function DistrictDetailPage({ params }: { params: Promise<{
         <p className="text-sm text-stone-500">{detail.seats} assembly constituencies</p>
       </div>
 
-      {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
-          <h3 className="font-heading font-semibold text-stone-800 mb-4">Seats Won Across Elections</h3>
-          <SeatsBarChart data={detail.tallies} />
-        </div>
-        <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
-          <h3 className="font-heading font-semibold text-stone-800 mb-4">Average Vote Share Trend</h3>
-          <VoteShareTrendChart data={detail.voteShareTrend} />
-        </div>
-      </div>
+      {/* Charts with Assembly/LS filter */}
+      <DistrictCharts tallies={detail.tallies} voteShareTrend={detail.voteShareTrend} />
 
       {/* Demographic summary */}
       <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">

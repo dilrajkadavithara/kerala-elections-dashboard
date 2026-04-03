@@ -7,6 +7,7 @@ import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import CategoryBadge from '@/components/CategoryBadge';
+import ElectionTypeFilter from '@/components/ElectionTypeFilter';
 import { ALLIANCE_COLORS } from '@/lib/constants';
 
 interface ConstOption {
@@ -65,22 +66,26 @@ export default function CompareDashboard({ allConstituencies, compareDataMap }: 
     : [];
 
   const selected = selectedIds.map((id) => compareDataMap[id]).filter(Boolean);
+  const [elTypeFilter, setElTypeFilter] = useState<'all' | 'assembly' | 'loksabha'>('all');
 
   // Build overlaid trend chart data
   const trendData = useMemo(() => {
     if (selected.length === 0) return [];
-    const elections = selected[0].trend.map((t) => t.election);
-    return elections.map((election, i) => {
+    const filteredTrend = selected[0].trend.filter((t) =>
+      elTypeFilter === 'all' ? true : elTypeFilter === 'assembly' ? t.election.startsWith("A'") : t.election.startsWith("LS'")
+    );
+    const elections = filteredTrend.map((t) => t.election);
+    return elections.map((election) => {
       const point: Record<string, string | number> = { election };
       for (const item of selected) {
-        const t = item.trend[i];
+        const t = item.trend.find((tr) => tr.election === election);
         if (t) {
           point[`${item.CONSTITUENCY}_${activeAlliance}`] = +(t[activeAlliance] * 100).toFixed(1);
         }
       }
       return point;
     });
-  }, [selected, activeAlliance]);
+  }, [selected, activeAlliance, elTypeFilter]);
 
   // Comparison metrics
   const metrics = [
@@ -193,6 +198,8 @@ export default function CompareDashboard({ allConstituencies, compareDataMap }: 
           <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-heading font-semibold text-stone-800">Vote Share Comparison</h3>
+              <div className="flex items-center gap-3">
+                <ElectionTypeFilter value={elTypeFilter} onChange={setElTypeFilter} />
               <div className="flex gap-1">
                 {(['UDF', 'LDF', 'NDA'] as const).map((a) => (
                   <button
@@ -211,6 +218,7 @@ export default function CompareDashboard({ allConstituencies, compareDataMap }: 
                     {a}
                   </button>
                 ))}
+              </div>
               </div>
             </div>
             <ResponsiveContainer width="100%" height={300}>
