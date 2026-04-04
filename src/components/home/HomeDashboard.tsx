@@ -116,15 +116,13 @@ export default function HomeDashboard({
 
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Grouped bar chart — seats across elections of the same type */}
+        {/* Donut chart — seat distribution for selected election */}
         <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-heading font-semibold text-stone-800">
-              Seats Won — {current.type === 'assembly' ? 'Assembly Elections' : 'Lok Sabha Elections'}
-            </h3>
-          </div>
+          <h3 className="font-heading font-semibold text-stone-800 mb-4">
+            Seat Distribution — {ELECTIONS.find((e) => e.key === selectedKey)?.label}
+          </h3>
           <SeatsBarChart
-            data={tallies.filter((t) => t.type === current.type)}
+            data={tallies}
             highlightKey={selectedKey}
           />
         </div>
