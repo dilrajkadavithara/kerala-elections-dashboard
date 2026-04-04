@@ -34,5 +34,6 @@ export const NAV_LINKS = [
   { href: '/categories', label: 'Categories' },
   { href: '/compare', label: 'Compare' },
   { href: '/trends', label: 'Trends' },
+  { href: '/simulate', label: 'Simulate' },
   { href: '/demographics', label: 'Demographics' },
 ] as const;
