@@ -167,6 +167,7 @@ const ELECTIONS_MAP: Record<string, { year: number; type: 'assembly' | 'loksabha
   A2011: { year: 2011, type: 'assembly' },
   A2016: { year: 2016, type: 'assembly' },
   A2021: { year: 2021, type: 'assembly' },
+  A2026: { year: 2026, type: 'assembly' },
   LS2014: { year: 2014, type: 'loksabha' },
   LS2019: { year: 2019, type: 'loksabha' },
   LS2024: { year: 2024, type: 'loksabha' },
@@ -333,7 +334,7 @@ export function getDistrictSummaries(electionKey: string) {
 }
 
 export function getDistrictStackedData() {
-  const keys = ['A2011', 'A2016', 'A2021', 'LS2014', 'LS2019', 'LS2024'] as const;
+  const keys = ['A2011', 'A2016', 'A2021', 'A2026', 'LS2014', 'LS2019', 'LS2024'] as const;
   const allDistricts = getDistrictList();
   return keys.map((key) => {
     const summaries = getDistrictSummaries(key);
@@ -355,7 +356,7 @@ export function getDistrictDetail(name: string) {
   const categoryMap = new Map(categoryAnalysis.map((c) => [c.CONST_ID, c]));
 
   // Seat tally across all elections
-  const electionKeys = ['A2011', 'A2016', 'A2021', 'LS2014', 'LS2019', 'LS2024'] as const;
+  const electionKeys = ['A2011', 'A2016', 'A2021', 'A2026', 'LS2014', 'LS2019', 'LS2024'] as const;
   const tallies = electionKeys.map((key) => {
     const el = ELECTIONS_MAP[key];
     const data = el.type === 'assembly' ? getAssemblyByYear(el.year) : getLokSabhaByYear(el.year);

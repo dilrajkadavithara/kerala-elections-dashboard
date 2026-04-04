@@ -21,6 +21,7 @@ export const ELECTIONS = [
   { key: 'A2011', label: 'Assembly 2011', shortLabel: "A'11", year: 2011, type: 'assembly' as const },
   { key: 'A2016', label: 'Assembly 2016', shortLabel: "A'16", year: 2016, type: 'assembly' as const },
   { key: 'A2021', label: 'Assembly 2021', shortLabel: "A'21", year: 2021, type: 'assembly' as const },
+  { key: 'A2026', label: 'Assembly 2026', shortLabel: "A'26", year: 2026, type: 'assembly' as const },
   { key: 'LS2014', label: 'Lok Sabha 2014', shortLabel: "LS'14", year: 2014, type: 'loksabha' as const },
   { key: 'LS2019', label: 'Lok Sabha 2019', shortLabel: "LS'19", year: 2019, type: 'loksabha' as const },
   { key: 'LS2024', label: 'Lok Sabha 2024', shortLabel: "LS'24", year: 2024, type: 'loksabha' as const },
