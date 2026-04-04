@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Users, Award, BarChart3 } from 'lucide-react';
+import { Users, Award, BarChart3, Calendar, MapPin, Vote } from 'lucide-react';
 import AllianceBadge from '@/components/AllianceBadge';
 import SeatTallyBar from '@/components/SeatTallyBar';
 import SeatsBarChart from '@/components/charts/SeatsBarChart';
@@ -95,39 +95,37 @@ export default function HomeDashboard({
       {/* ── OVERVIEW MODE ── */}
       {isOverview && (
         <>
-          {/* Summary using latest assembly election */}
-          {latestAssembly && (
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <MetricCard
-                label="Total Seats"
-                value={latestAssembly.total}
-                icon={<Users size={18} className="text-stone-400" />}
-                accent="#78716C"
-                subtitle={`Assembly ${latestAssembly.year}`}
-              />
-              <MetricCard
-                label="UDF Seats"
-                value={latestAssembly.UDF}
-                icon={<Award size={18} className="text-blue-500" />}
-                accent={ALLIANCE_COLORS.UDF.primary}
-                subtitle={`Assembly ${latestAssembly.year}`}
-              />
-              <MetricCard
-                label="LDF Seats"
-                value={latestAssembly.LDF}
-                icon={<Award size={18} className="text-red-500" />}
-                accent={ALLIANCE_COLORS.LDF.primary}
-                subtitle={`Assembly ${latestAssembly.year}`}
-              />
-              <MetricCard
-                label="NDA Seats"
-                value={latestAssembly.NDA}
-                icon={<Award size={18} className="text-amber-500" />}
-                accent={ALLIANCE_COLORS.NDA.primary}
-                subtitle={`Assembly ${latestAssembly.year}`}
-              />
-            </div>
-          )}
+          {/* Overview summary stats */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <MetricCard
+              label="Elections Covered"
+              value={tallies.length}
+              icon={<Vote size={18} className="text-stone-400" />}
+              accent="#78716C"
+              subtitle="Assembly + Lok Sabha"
+            />
+            <MetricCard
+              label="Constituencies"
+              value={140}
+              icon={<MapPin size={18} className="text-emerald-500" />}
+              accent="#059669"
+              subtitle="Across 14 districts"
+            />
+            <MetricCard
+              label="Assembly Elections"
+              value={tallies.filter((t) => t.type === 'assembly').length}
+              icon={<Calendar size={18} className="text-blue-500" />}
+              accent={ALLIANCE_COLORS.UDF.primary}
+              subtitle={tallies.filter((t) => t.type === 'assembly').map((t) => t.year).join(', ')}
+            />
+            <MetricCard
+              label="Lok Sabha Elections"
+              value={tallies.filter((t) => t.type === 'loksabha').length}
+              icon={<Calendar size={18} className="text-violet-500" />}
+              accent="#7C3AED"
+              subtitle={tallies.filter((t) => t.type === 'loksabha').map((t) => t.year).join(', ')}
+            />
+          </div>
 
           {/* Charts row — bar chart with ALL elections + category breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
