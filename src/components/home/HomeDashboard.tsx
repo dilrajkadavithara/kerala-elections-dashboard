@@ -8,7 +8,6 @@ import SeatTallyBar from '@/components/SeatTallyBar';
 import SeatsBarChart from '@/components/charts/SeatsBarChart';
 import CategoryBreakdownChart from '@/components/charts/CategoryBreakdownChart';
 import CategoryExplanation from '@/components/CategoryExplanation';
-import ElectionTypeFilter from '@/components/ElectionTypeFilter';
 import { ELECTIONS, ALLIANCE_COLORS } from '@/lib/constants';
 
 interface TallyRow {
@@ -47,7 +46,6 @@ export default function HomeDashboard({
   categoryBreakdown,
 }: HomeDashboardProps) {
   const [selectedKey, setSelectedKey] = useState('A2021');
-  const [electionTypeFilter, setElectionTypeFilter] = useState<'all' | 'assembly' | 'loksabha'>('all');
   const current = tallies.find((t) => t.key === selectedKey) || tallies[0];
   const closest = closestFightsMap[selectedKey] || [];
 
@@ -118,15 +116,17 @@ export default function HomeDashboard({
 
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Grouped bar chart — seats across all elections */}
+        {/* Grouped bar chart — seats across elections of the same type */}
         <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-heading font-semibold text-stone-800">
-              Seats Won Across Elections
+              Seats Won — {current.type === 'assembly' ? 'Assembly Elections' : 'Lok Sabha Elections'}
             </h3>
-            <ElectionTypeFilter value={electionTypeFilter} onChange={setElectionTypeFilter} />
           </div>
-          <SeatsBarChart data={electionTypeFilter === 'all' ? tallies : tallies.filter((t) => t.type === electionTypeFilter)} />
+          <SeatsBarChart
+            data={tallies.filter((t) => t.type === current.type)}
+            highlightKey={selectedKey}
+          />
         </div>
 
         {/* Category breakdown */}
