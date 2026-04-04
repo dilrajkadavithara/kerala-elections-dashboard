@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Users, Award } from 'lucide-react';
+import { Users, Award, BarChart3 } from 'lucide-react';
 import AllianceBadge from '@/components/AllianceBadge';
 import SeatTallyBar from '@/components/SeatTallyBar';
 import SeatsBarChart from '@/components/charts/SeatsBarChart';
+import SeatsDonutChart from '@/components/charts/SeatsDonutChart';
 import CategoryBreakdownChart from '@/components/charts/CategoryBreakdownChart';
 import CategoryExplanation from '@/components/CategoryExplanation';
 import { ELECTIONS, ALLIANCE_COLORS } from '@/lib/constants';
@@ -45,14 +46,34 @@ export default function HomeDashboard({
   closestFightsMap,
   categoryBreakdown,
 }: HomeDashboardProps) {
-  const [selectedKey, setSelectedKey] = useState('A2021');
-  const current = tallies.find((t) => t.key === selectedKey) || tallies[0];
-  const closest = closestFightsMap[selectedKey] || [];
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
+  const isOverview = selectedKey === null;
+  const current = selectedKey
+    ? tallies.find((t) => t.key === selectedKey) || tallies[0]
+    : null;
+  const closest = selectedKey ? closestFightsMap[selectedKey] || [] : [];
+
+  // For overview: aggregate latest assembly result (most recent with actual results)
+  const latestAssembly = tallies
+    .filter((t) => t.type === 'assembly' && (t.UDF + t.LDF + t.NDA + t.IND) > 0)
+    .sort((a, b) => b.year - a.year)[0];
 
   return (
     <div className="space-y-6">
       {/* Year selector pills */}
       <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => setSelectedKey(null)}
+          className={`px-4 py-2 rounded-full text-sm font-semibold border transition-all flex items-center gap-1.5 ${
+            isOverview
+              ? 'bg-stone-900 text-white border-stone-900'
+              : 'bg-white text-stone-600 border-stone-200 hover:border-stone-400'
+          }`}
+        >
+          <BarChart3 size={14} />
+          Overview
+        </button>
         {ELECTIONS.map((el) => {
           const isActive = el.key === selectedKey;
           return (
@@ -71,128 +92,187 @@ export default function HomeDashboard({
         })}
       </div>
 
-      {/* Summary metric cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <MetricCard
-          label="Total Seats"
-          value={current.total}
-          icon={<Users size={18} className="text-stone-400" />}
-          accent="#78716C"
-        />
-        <MetricCard
-          label="UDF Seats"
-          value={current.UDF}
-          icon={<Award size={18} className="text-blue-500" />}
-          accent={ALLIANCE_COLORS.UDF.primary}
-        />
-        <MetricCard
-          label="LDF Seats"
-          value={current.LDF}
-          icon={<Award size={18} className="text-red-500" />}
-          accent={ALLIANCE_COLORS.LDF.primary}
-        />
-        <MetricCard
-          label="NDA Seats"
-          value={current.NDA}
-          icon={<Award size={18} className="text-amber-500" />}
-          accent={ALLIANCE_COLORS.NDA.primary}
-        />
-      </div>
+      {/* ── OVERVIEW MODE ── */}
+      {isOverview && (
+        <>
+          {/* Summary using latest assembly election */}
+          {latestAssembly && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <MetricCard
+                label="Total Seats"
+                value={latestAssembly.total}
+                icon={<Users size={18} className="text-stone-400" />}
+                accent="#78716C"
+                subtitle={`Assembly ${latestAssembly.year}`}
+              />
+              <MetricCard
+                label="UDF Seats"
+                value={latestAssembly.UDF}
+                icon={<Award size={18} className="text-blue-500" />}
+                accent={ALLIANCE_COLORS.UDF.primary}
+                subtitle={`Assembly ${latestAssembly.year}`}
+              />
+              <MetricCard
+                label="LDF Seats"
+                value={latestAssembly.LDF}
+                icon={<Award size={18} className="text-red-500" />}
+                accent={ALLIANCE_COLORS.LDF.primary}
+                subtitle={`Assembly ${latestAssembly.year}`}
+              />
+              <MetricCard
+                label="NDA Seats"
+                value={latestAssembly.NDA}
+                icon={<Award size={18} className="text-amber-500" />}
+                accent={ALLIANCE_COLORS.NDA.primary}
+                subtitle={`Assembly ${latestAssembly.year}`}
+              />
+            </div>
+          )}
 
-      {/* Seat tally bar */}
-      <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
-        <h3 className="text-sm font-semibold text-stone-600 mb-3">
-          Seat Distribution — {ELECTIONS.find((e) => e.key === selectedKey)?.label}
-        </h3>
-        <SeatTallyBar
-          udf={current.UDF}
-          ldf={current.LDF}
-          nda={current.NDA}
-          ind={current.IND}
-          total={current.total}
-          height="lg"
-        />
-      </div>
+          {/* Charts row — bar chart with ALL elections + category breakdown */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
+              <h3 className="font-heading font-semibold text-stone-800 mb-4">
+                Seats Won Across All Elections
+              </h3>
+              <SeatsBarChart data={tallies} />
+            </div>
 
-      {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Donut chart — seat distribution for selected election */}
-        <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
-          <h3 className="font-heading font-semibold text-stone-800 mb-4">
-            Seat Distribution — {ELECTIONS.find((e) => e.key === selectedKey)?.label}
-          </h3>
-          <SeatsBarChart
-            data={tallies}
-            highlightKey={selectedKey}
-          />
-        </div>
+            <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
+              <h3 className="font-heading font-semibold text-stone-800 mb-4">
+                Category Breakdown
+              </h3>
+              <CategoryBreakdownChart data={categoryBreakdown} />
+            </div>
+          </div>
 
-        {/* Category breakdown */}
-        <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
-          <h3 className="font-heading font-semibold text-stone-800 mb-4">
-            Category Breakdown
-          </h3>
-          <CategoryBreakdownChart data={categoryBreakdown} />
-        </div>
-      </div>
+          {/* Category explanation */}
+          <CategoryExplanation />
+        </>
+      )}
 
-      {/* Category explanation */}
-      <CategoryExplanation />
+      {/* ── SELECTED ELECTION MODE ── */}
+      {!isOverview && current && (
+        <>
+          {/* Summary metric cards */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <MetricCard
+              label="Total Seats"
+              value={current.total}
+              icon={<Users size={18} className="text-stone-400" />}
+              accent="#78716C"
+            />
+            <MetricCard
+              label="UDF Seats"
+              value={current.UDF}
+              icon={<Award size={18} className="text-blue-500" />}
+              accent={ALLIANCE_COLORS.UDF.primary}
+            />
+            <MetricCard
+              label="LDF Seats"
+              value={current.LDF}
+              icon={<Award size={18} className="text-red-500" />}
+              accent={ALLIANCE_COLORS.LDF.primary}
+            />
+            <MetricCard
+              label="NDA Seats"
+              value={current.NDA}
+              icon={<Award size={18} className="text-amber-500" />}
+              accent={ALLIANCE_COLORS.NDA.primary}
+            />
+          </div>
 
-      {/* Closest fights table */}
-      <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
-        <h3 className="font-heading font-semibold text-stone-800 mb-4">
-          Closest Fights — {ELECTIONS.find((e) => e.key === selectedKey)?.label}
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-stone-50 text-stone-600 text-xs uppercase tracking-wider">
-                <th className="text-left px-4 py-2.5 font-semibold">#</th>
-                <th className="text-left px-4 py-2.5 font-semibold">Constituency</th>
-                <th className="text-left px-4 py-2.5 font-semibold">Winner</th>
-                <th className="text-right px-4 py-2.5 font-semibold">Margin</th>
-                <th className="text-right px-4 py-2.5 font-semibold">UDF%</th>
-                <th className="text-right px-4 py-2.5 font-semibold">LDF%</th>
-                <th className="text-right px-4 py-2.5 font-semibold">NDA%</th>
-              </tr>
-            </thead>
-            <tbody>
-              {closest.map((row, i) => (
-                <tr
-                  key={row.CONST_ID}
-                  className="border-b border-stone-100 hover:bg-stone-50 transition-colors"
-                >
-                  <td className="px-4 py-2.5 text-stone-400">{i + 1}</td>
-                  <td className="px-4 py-2.5">
-                    <Link
-                      href={`/constituency/${row.CONST_ID}`}
-                      className="text-blue-600 hover:underline font-medium"
+          {/* Seat tally bar */}
+          <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
+            <h3 className="text-sm font-semibold text-stone-600 mb-3">
+              Seat Distribution — {ELECTIONS.find((e) => e.key === selectedKey)?.label}
+            </h3>
+            <SeatTallyBar
+              udf={current.UDF}
+              ldf={current.LDF}
+              nda={current.NDA}
+              ind={current.IND}
+              total={current.total}
+              height="lg"
+            />
+          </div>
+
+          {/* Charts row — donut + category */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
+              <h3 className="font-heading font-semibold text-stone-800 mb-4">
+                Seat Distribution — {ELECTIONS.find((e) => e.key === selectedKey)?.label}
+              </h3>
+              <SeatsDonutChart data={current} />
+            </div>
+
+            <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
+              <h3 className="font-heading font-semibold text-stone-800 mb-4">
+                Category Breakdown
+              </h3>
+              <CategoryBreakdownChart data={categoryBreakdown} />
+            </div>
+          </div>
+
+          {/* Category explanation */}
+          <CategoryExplanation />
+
+          {/* Closest fights table */}
+          <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
+            <h3 className="font-heading font-semibold text-stone-800 mb-4">
+              Closest Fights — {ELECTIONS.find((e) => e.key === selectedKey)?.label}
+            </h3>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-stone-50 text-stone-600 text-xs uppercase tracking-wider">
+                    <th className="text-left px-4 py-2.5 font-semibold">#</th>
+                    <th className="text-left px-4 py-2.5 font-semibold">Constituency</th>
+                    <th className="text-left px-4 py-2.5 font-semibold">Winner</th>
+                    <th className="text-right px-4 py-2.5 font-semibold">Margin</th>
+                    <th className="text-right px-4 py-2.5 font-semibold">UDF%</th>
+                    <th className="text-right px-4 py-2.5 font-semibold">LDF%</th>
+                    <th className="text-right px-4 py-2.5 font-semibold">NDA%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {closest.map((row, i) => (
+                    <tr
+                      key={row.CONST_ID}
+                      className="border-b border-stone-100 hover:bg-stone-50 transition-colors"
                     >
-                      {row.CONSTITUENCY}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-2.5">
-                    <AllianceBadge alliance={row.WINNING_ALLIANCE} />
-                  </td>
-                  <td className="px-4 py-2.5 text-right font-mono font-medium text-stone-800">
-                    {Math.abs(row.MARGIN).toLocaleString()}
-                  </td>
-                  <td className="px-4 py-2.5 text-right text-stone-600">
-                    {(row.UDF_VOTE_PCT * 100).toFixed(1)}%
-                  </td>
-                  <td className="px-4 py-2.5 text-right text-stone-600">
-                    {(row.LDF_VOTE_PCT * 100).toFixed(1)}%
-                  </td>
-                  <td className="px-4 py-2.5 text-right text-stone-600">
-                    {(row.NDA_VOTE_PCT * 100).toFixed(1)}%
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+                      <td className="px-4 py-2.5 text-stone-400">{i + 1}</td>
+                      <td className="px-4 py-2.5">
+                        <Link
+                          href={`/constituency/${row.CONST_ID}`}
+                          className="text-blue-600 hover:underline font-medium"
+                        >
+                          {row.CONSTITUENCY}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <AllianceBadge alliance={row.WINNING_ALLIANCE} />
+                      </td>
+                      <td className="px-4 py-2.5 text-right font-mono font-medium text-stone-800">
+                        {Math.abs(row.MARGIN).toLocaleString()}
+                      </td>
+                      <td className="px-4 py-2.5 text-right text-stone-600">
+                        {(row.UDF_VOTE_PCT * 100).toFixed(1)}%
+                      </td>
+                      <td className="px-4 py-2.5 text-right text-stone-600">
+                        {(row.LDF_VOTE_PCT * 100).toFixed(1)}%
+                      </td>
+                      <td className="px-4 py-2.5 text-right text-stone-600">
+                        {(row.NDA_VOTE_PCT * 100).toFixed(1)}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -202,11 +282,13 @@ function MetricCard({
   value,
   icon,
   accent,
+  subtitle,
 }: {
   label: string;
   value: number;
   icon: React.ReactNode;
   accent: string;
+  subtitle?: string;
 }) {
   return (
     <div className="bg-white border border-stone-200 rounded-xl shadow-sm p-5">
@@ -222,6 +304,9 @@ function MetricCard({
       >
         {value}
       </div>
+      {subtitle && (
+        <div className="text-[10px] text-stone-400 mt-1">{subtitle}</div>
+      )}
     </div>
   );
 }
