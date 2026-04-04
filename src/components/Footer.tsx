@@ -12,7 +12,7 @@ export default function Footer() {
               <span className="font-heading font-bold text-sm text-stone-900">Kerala Elections Dashboard</span>
             </Link>
             <p className="text-xs text-stone-500 max-w-md leading-relaxed">
-              Data covers Assembly elections (2011, 2016, 2021) and Lok Sabha elections (2014, 2019, 2024).
+              Data covers Assembly elections (2011, 2016, 2021, 2026) and Lok Sabha elections (2014, 2019, 2024).
               140 constituencies across 14 districts and 20 parliamentary constituencies.
             </p>
           </div>

@@ -23,12 +23,12 @@ export const metadata: Metadata = {
     template: '%s — Kerala Elections Dashboard',
   },
   description:
-    'Interactive dashboard analyzing Kerala election data across 6 elections covering all 140 assembly constituencies.',
+    'Interactive dashboard analyzing Kerala election data across 7 elections covering all 140 assembly constituencies.',
   metadataBase: new URL('https://kerala-elections-dashboard.vercel.app'),
   openGraph: {
     title: 'Kerala Elections Dashboard',
     description:
-      'Interactive dashboard analyzing Kerala election data across Assembly (2011, 2016, 2021) and Lok Sabha (2014, 2019, 2024) elections covering all 140 constituencies.',
+      'Interactive dashboard analyzing Kerala election data across Assembly (2011, 2016, 2021, 2026) and Lok Sabha (2014, 2019, 2024) elections covering all 140 constituencies.',
     type: 'website',
     locale: 'en_IN',
     siteName: 'Kerala Elections Dashboard',

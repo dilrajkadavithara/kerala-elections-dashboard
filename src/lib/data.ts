@@ -366,7 +366,7 @@ export function getDistrictDetail(name: string) {
       const a = r.WINNING_ALLIANCE as keyof typeof tally;
       if (a in tally) tally[a]++;
     }
-    return { key, label: key.replace('A', "A'").replace('LS', "LS'").replace('2011', '11').replace('2016', '16').replace('2021', '21').replace('2014', '14').replace('2019', '19').replace('2024', '24'), ...tally };
+    return { key, label: key.replace('A', "A'").replace('LS', "LS'").replace('2011', '11').replace('2016', '16').replace('2021', '21').replace('2026', '26').replace('2014', '14').replace('2019', '19').replace('2024', '24'), ...tally };
   });
 
   // Average vote share trend
@@ -376,7 +376,7 @@ export function getDistrictDetail(name: string) {
     const districtData = data.filter((r) => ids.has(r.CONST_ID));
     const n = districtData.length || 1;
     return {
-      election: key.replace('A', "A'").replace('LS', "LS'").replace('2011', '11').replace('2016', '16').replace('2021', '21').replace('2014', '14').replace('2019', '19').replace('2024', '24'),
+      election: key.replace('A', "A'").replace('LS', "LS'").replace('2011', '11').replace('2016', '16').replace('2021', '21').replace('2026', '26').replace('2014', '14').replace('2019', '19').replace('2024', '24'),
       year: el.year,
       type: el.type,
       UDF: districtData.reduce((s, r) => s + r.UDF_VOTE_PCT, 0) / n,
@@ -732,6 +732,7 @@ export function getAllElectionTallies() {
     { key: 'A2011', label: "A'11", year: 2011, type: 'assembly' as const, ...getSeatTally('assembly', 2011) },
     { key: 'A2016', label: "A'16", year: 2016, type: 'assembly' as const, ...getSeatTally('assembly', 2016) },
     { key: 'A2021', label: "A'21", year: 2021, type: 'assembly' as const, ...getSeatTally('assembly', 2021) },
+    { key: 'A2026', label: "A'26", year: 2026, type: 'assembly' as const, ...getSeatTally('assembly', 2026) },
     { key: 'LS2014', label: "LS'14", year: 2014, type: 'loksabha' as const, ...getSeatTally('loksabha', 2014) },
     { key: 'LS2019', label: "LS'19", year: 2019, type: 'loksabha' as const, ...getSeatTally('loksabha', 2019) },
     { key: 'LS2024', label: "LS'24", year: 2024, type: 'loksabha' as const, ...getSeatTally('loksabha', 2024) },

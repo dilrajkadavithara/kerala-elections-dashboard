@@ -48,7 +48,7 @@ export default function HomeDashboard({
 }: HomeDashboardProps) {
   const [selectedKey, setSelectedKey] = useState('A2021');
   const [electionTypeFilter, setElectionTypeFilter] = useState<'all' | 'assembly' | 'loksabha'>('all');
-  const current = tallies.find((t) => t.key === selectedKey)!;
+  const current = tallies.find((t) => t.key === selectedKey) || tallies[0];
   const closest = closestFightsMap[selectedKey] || [];
 
   return (
